@@ -2,8 +2,8 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>黑曜士·智能排雷助手 (V5.0 终极高算力版)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>极寒风控 · 智能排雷终端 (V11.0 全属性矩阵版)</title>
 <style>
     :root {
         --bg: #050508;
@@ -71,6 +71,7 @@
         padding: 15px 20px; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border);
         display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: center;
     }
+    .config-item.full { grid-column: span 2; }
     .config-item { display: flex; flex-direction: column; gap: 5px; position: relative; }
     .config-item label { font-size: 11px; color: var(--dim); letter-spacing: 1px; display: flex; justify-content: space-between;}
     .lock-tag { color: var(--gold); font-size: 10px; display: none; cursor: pointer; text-decoration: underline;}
@@ -82,10 +83,10 @@
 
     .radar-section { padding: 15px 0 10px; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; }
     .radar-circle {
-        width: 70px; height: 70px; border-radius: 50%; border: 2px dashed rgba(244, 63, 94, 0.3);
+        width: 60px; height: 60px; border-radius: 50%; border: 2px dashed rgba(244, 63, 94, 0.3);
         position: relative; display: flex; justify-content: center; align-items: center; margin-bottom: 10px;
     }
-    .radar-inner { width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(56, 189, 248, 0.5); box-shadow: inset 0 0 20px rgba(56, 189, 248, 0.2); }
+    .radar-inner { width: 35px; height: 35px; border-radius: 50%; border: 1px solid rgba(56, 189, 248, 0.5); box-shadow: inset 0 0 15px rgba(56, 189, 248, 0.2); }
     .scan-line {
         position: absolute; top: 0; left: 50%; width: 2px; height: 50%;
         background: linear-gradient(to top, var(--red), transparent); transform-origin: bottom center; animation: scan 3s linear infinite;
@@ -99,7 +100,7 @@
     }
 
     .list-wrapper { position: relative; padding: 0 20px 20px; }
-    .kill-list { display: flex; flex-direction: column; gap: 10px; max-height: 350px; overflow-y: auto; transition: filter 0.3s;}
+    .kill-list { display: flex; flex-direction: column; gap: 10px; max-height: 480px; overflow-y: auto; transition: filter 0.3s;}
     .kill-list::-webkit-scrollbar { width: 4px; }
     .kill-list::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
 
@@ -109,7 +110,8 @@
         display: flex; justify-content: space-between; align-items: center;
     }
     .kill-info { display: flex; flex-direction: column; gap: 6px; flex: 1; }
-    .kill-title { font-size: 13px; color: #e2e8f0; font-weight: bold; }
+    .kill-title { font-size: 13px; color: #e2e8f0; font-weight: bold; display: flex; align-items: center; gap: 8px;}
+    .intersect-badge { font-size: 10px; background: rgba(56, 189, 248, 0.15); color: var(--blue); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(56, 189, 248, 0.3); }
     .kill-stat { font-size: 11px; color: var(--dim); font-family: monospace; display: flex; gap: 10px;}
     .stat-hit { color: var(--green); }
     .stat-rate { font-weight: bold; }
@@ -143,45 +145,21 @@
     .btn-analyze:hover { background: rgba(56, 189, 248, 0.1); }
     .btn-analyze:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* ================= 超强视觉运算弹窗 ================= */
-    .calc-modal { 
-        position: fixed; inset: 0; background: rgba(5,5,8,0.98); 
-        z-index: 99999; display: none; flex-direction: column; justify-content: center; align-items: center; 
-        backdrop-filter: blur(8px); padding: 30px; 
-        /* 增加扫描线背景 */
-        background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(56,189,248,0.03) 2px, rgba(56,189,248,0.03) 4px);
-    }
+    .calc-modal { position: fixed; inset: 0; background: rgba(5,5,8,0.98); z-index: 99999; display: none; flex-direction: column; justify-content: center; align-items: center; backdrop-filter: blur(8px); padding: 30px; background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(56,189,248,0.03) 2px, rgba(56,189,248,0.03) 4px); }
     .calc-modal.show { display: flex; }
     .calc-inner { width: 100%; max-width: 400px; }
-    
-    .calc-title { 
-        color: var(--blue); font-size: 15px; font-weight: 900; letter-spacing: 2px; 
-        margin-bottom: 25px; text-align: center; text-transform: uppercase;
-        text-shadow: 0 0 15px rgba(56,189,248,0.5);
-    }
+    .calc-title { color: var(--blue); font-size: 15px; font-weight: 900; letter-spacing: 2px; margin-bottom: 25px; text-align: center; text-transform: uppercase; text-shadow: 0 0 15px rgba(56,189,248,0.5); }
     .calc-title span { color: var(--red); text-shadow: 0 0 15px rgba(244,63,94,0.5); }
-    
-    .progress-container { width: 100%; height: 4px; background: #1f2937; border-radius: 2px; overflow: hidden; margin-bottom: 25px; box-shadow: 0 0 10px rgba(56,189,248,0.2); }
+    .progress-container { width: 100%; height: 4px; background: #1f2937; border-radius: 2px; overflow: hidden; margin-bottom: 25px; }
     .progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg, var(--blue), var(--red)); transition: width 0.2s ease; }
-    
-    .calc-logs { 
-        width: 100%; height: 180px; background: #000; border: 1px solid #333; border-radius: 8px; 
-        padding: 12px; overflow-y: auto; font-family: 'Courier New', Courier, monospace; font-size: 11px; 
-        color: #94a3b8; line-height: 1.8; box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
-    }
+    .calc-logs { width: 100%; height: 180px; background: #000; border: 1px solid #333; border-radius: 8px; padding: 12px; overflow-y: auto; font-family: 'Courier New', Courier, monospace; font-size: 11px; color: #94a3b8; line-height: 1.8; }
     .log-success { color: var(--green); }
     .log-warn { color: var(--gold); }
     .log-danger { color: var(--red); }
     .log-sys { color: var(--blue); font-weight: bold;}
-    
-    /* 闪烁光标 */
-    .cursor {
-        display: inline-block; width: 6px; height: 12px; background: var(--blue);
-        animation: blink 1s step-end infinite; vertical-align: middle; margin-left: 5px;
-    }
+    .cursor { display: inline-block; width: 6px; height: 12px; background: var(--blue); animation: blink 1s step-end infinite; vertical-align: middle; margin-left: 5px; }
     @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
-    /* VIP 验证弹窗 */
     .vip-modal { position: fixed; inset: 0; background: rgba(5,5,8,0.95); z-index: 99999; display: none; flex-direction: column; justify-content: center; align-items: center; backdrop-filter: blur(10px); padding: 30px; }
     .vip-modal.show { display: flex; }
     .vip-modal-content { background: var(--panel-bg); border: 1px solid var(--red); border-radius: 16px; padding: 25px; width: 100%; max-width: 320px; text-align: center; box-shadow: 0 0 30px rgba(244,63,94,0.2); position: relative; }
@@ -192,34 +170,31 @@
 </head>
 <body>
 
-    <!-- 运算遮罩 -->
     <div id="calcModal" class="calc-modal">
         <div class="calc-inner">
-            <div class="calc-title">Executing <span>Quantum Matrix Algorithm</span></div>
+            <div class="calc-title">Executing <span id="calcStrategyName">Multi-Factor Model</span></div>
             <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
             <div class="calc-logs" id="calcLogs"></div>
         </div>
     </div>
 
-    <!-- VIP 验证弹窗 -->
     <div id="vipModal" class="vip-modal">
         <div class="vip-modal-content">
             <div class="vip-modal-close" onclick="document.getElementById('vipModal').classList.remove('show')">×</div>
             <div style="color: var(--red); font-size: 18px; font-weight: 900; margin-bottom: 10px;">🔒 升级 VIP 权限</div>
-            <div style="font-size: 12px; color: #94a3b8; margin-bottom: 20px;">输入您的专属网络卡密，解锁无限回测周期、多排雷设定及单数期专属数据。</div>
+            <div style="font-size: 12px; color: #94a3b8; margin-bottom: 20px;">免费用户仅支持【极寒单轨】、【近30期】、【杀1个】。输入卡密解锁高级三轨交集与深度回测。</div>
             <input type="text" id="vipCardInput" class="vip-input" placeholder="请输入卡密">
             <button class="btn-unlock" style="width: 100%; padding: 12px;" onclick="verifyCard()">立即验证并解锁</button>
         </div>
     </div>
 
-    <!-- 主界面 -->
     <div class="terminal-container">
         <div class="header">
-            <div class="brand"><span>黑曜士</span>极寒智能排雷助手_V5.0</div>
+            <div class="brand"><span>极寒</span> 风控排雷终端</div>
             <div class="status-dot" title="系统在线"></div>
         </div>
 
-        <div class="latest-result-panel" id="latestResultPanel">
+        <div class="latest-result-panel">
             <div class="latest-info">
                 <div class="latest-period" id="latestPeriod">加载中...</div>
                 <div class="latest-date" id="latestDate">--</div>
@@ -231,6 +206,14 @@
         </div>
 
         <div class="config-panel">
+            <div class="config-item full">
+                <label>排雷算法策略 <span class="lock-tag" id="lockStrategy" onclick="openVIP()" style="display:none;">🔒 升级解锁</span></label>
+                <select id="selStrategy">
+                    <option value="miss">极寒单轨 (绝对遗漏) - 不交集</option>
+                    <option value="combo">双轨共振 (漏+频) - 不交集 [VIP]</option>
+                    <option value="intersect">三轨严格交集 (高能过滤) [VIP]</option>
+                </select>
+            </div>
             <div class="config-item">
                 <label>回测周期 <span class="lock-tag" id="lockPeriod" onclick="openVIP()">🔒 解锁</span></label>
                 <select id="selPeriod">
@@ -268,7 +251,7 @@
         </div>
 
         <div class="footer">
-            <div style="font-size: 11px; color: var(--dim);">高维矩阵 & 防重过滤 (V5.0)</div>
+            <div style="font-size: 11px; color: var(--dim);">全维分流引擎 (V11.0)</div>
             <button class="btn-analyze" id="btnScan" onclick="startScan()">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
                 启动深度扫描
@@ -283,51 +266,85 @@
         const redWave=[1,2,7,8,12,13,18,19,23,24,29,30,34,35,40,45,46];
         const blueWave=[3,4,9,10,14,15,20,25,26,31,36,37,41,42,47,48];
 
+        // 【属性映射】
+        const sumMap = {
+            "01合": [1,10],"02合": [2,11,20],"03合": [3,12,21,30],"04合": [4,13,22,31,40],
+            "05合": [5,14,23,32,41],"06合": [6,15,24,33,42],"07合": [7,16,25,34,43],
+            "08合": [8,17,26,35,44],"09合": [9,18,27,36,45],"10合": [19,28,37,46],
+            "11合": [29,38,47],"12合": [39,48],"13合": [49]
+        };
+        const doorMap = {
+            "1门": [1,2,3,4,5,6,7,8,9],"2门": [10,11,12,13,14,15,16,17,18],
+            "3门": [19,20,21,22,23,24,25,26,27],"4门": [28,29,30,31,32,33,34,35,36,37],
+            "5门": [38,39,40,41,42,43,44,45,46,47,48,49]
+        };
+        const segMap = {
+            "1段": [1,2,3,4,5,6,7],"2段": [8,9,10,11,12,13,14],"3段": [15,16,17,18,19,20,21],
+            "4段": [22,23,24,25,26,27,28],"5段": [29,30,31,32,33,34,35],"6段": [36,37,38,39,40,41,42],
+            "7段": [43,44,45,46,47,48,49]
+        };
+        const wuXingMap = {
+            "金": [4,5,12,13,26,27,34,35,42,43],
+            "木": [8,9,16,17,24,25,38,39,46,47],
+            "水": [1,14,15,22,23,30,31,44,45],
+            "火": [2,3,10,11,18,19,32,33,40,41,48,49],
+            "土": [6,7,20,21,28,29,36,37]
+        };
+
+        function getSumGroupReal(n) { for(let k in sumMap){ if(sumMap[k].includes(n)) return k; } return ""; }
+        function getDoorGroup(n) { for(let k in doorMap){ if(doorMap[k].includes(n)) return k; } return ""; }
+        function getSegGroup(n) { for(let k in segMap){ if(segMap[k].includes(n)) return k; } return ""; }
+        function getWuXing(n) { for(let k in wuXingMap){ if(wuXingMap[k].includes(n)) return k; } return ""; }
+        // 合尾（两数相加取个位）
+        function getTailSum(n) { let sum = Math.floor(n/10) + (n%10); return (sum % 10) + "合尾"; }
+        // 头数单双
+        function getHeadParity(n) { let head = Math.floor(n/10); let parity = (n%2 !== 0) ? "单" : "双"; return head + "头" + parity; }
+
         let SEQ = []; 
         let isVIP = localStorage.getItem('quantum_vip_auth') === 'true';
         const COOLDOWN_ZODIAC = 5; 
         const COOLDOWN_NUM = 8; 
 
+        const sortDesc = (obj) => Object.keys(obj).sort((a,b) => obj[b] - obj[a]);
+
         function initVIPUI() {
+            const selStrategy = document.getElementById('selStrategy');
             const selPeriod = document.getElementById('selPeriod');
             const selCount = document.getElementById('selCount');
+            const lockStrategy = document.getElementById('lockStrategy');
             const lockPeriod = document.getElementById('lockPeriod');
             const lockCount = document.getElementById('lockCount');
 
             if (isVIP) {
+                selStrategy.disabled = false;
                 selPeriod.disabled = false;
                 selCount.disabled = false;
+                lockStrategy.style.display = 'none';
                 lockPeriod.style.display = 'none';
                 lockCount.style.display = 'none';
             } else {
+                selStrategy.value = "miss";
                 selPeriod.value = "30";
                 selCount.value = "1";
+                lockStrategy.style.display = 'inline-block';
                 lockPeriod.style.display = 'inline-block';
                 lockCount.style.display = 'inline-block';
             }
         }
 
+        document.getElementById('selStrategy').addEventListener('change', function(e) {
+            if (!isVIP && this.value !== 'miss') { this.value = 'miss'; openVIP(); } else { renderDashboard(); }
+        });
+
         document.getElementById('selPeriod').addEventListener('change', function(e) {
-            if (!isVIP && this.value !== '30') {
-                this.value = '30';
-                openVIP();
-            } else {
-                renderDashboard();
-            }
+            if (!isVIP && this.value !== '30') { this.value = '30'; openVIP(); } else { renderDashboard(); }
         });
 
         document.getElementById('selCount').addEventListener('change', function(e) {
-            if (!isVIP && this.value !== '1') {
-                this.value = '1';
-                openVIP();
-            } else {
-                renderDashboard();
-            }
+            if (!isVIP && this.value !== '1') { this.value = '1'; openVIP(); } else { renderDashboard(); }
         });
 
-        function openVIP() {
-            document.getElementById('vipModal').classList.add('show');
-        }
+        function openVIP() { document.getElementById('vipModal').classList.add('show'); }
 
         function verifyCard() {
             const val = document.getElementById('vipCardInput').value.trim();
@@ -337,7 +354,7 @@
                 document.getElementById('vipModal').classList.remove('show');
                 initVIPUI();
                 renderDashboard(); 
-                alert('✅ VIP 验证成功，权限已解锁！');
+                alert('✅ VIP 验证成功，高级策略与深度回测权限已解锁！');
             } else {
                 alert('❌ 卡密无效或长度不足（测试输入任意 6 位以上字符即可）');
             }
@@ -348,7 +365,7 @@
         function getHalfWave(n){ let w=getWave(n); let isOdd=n%2!==0; return w[0]+(isOdd?"单":"双"); }
         function getHead(n){ return Math.floor(n/10)+"头"; }
 
-        function calcScores(pastSeq) {
+        function calcScores(pastSeq, strategy, targetCount, recentHistory, isBacktest) {
             let miss = {}; for(let i=1; i<=49; i++) miss[i] = 100;
             let freq = {}; for(let i=1; i<=49; i++) freq[i] = 0;
 
@@ -358,39 +375,121 @@
                 if(miss[num] === 100) miss[num] = diff;
                 if(diff < 50) freq[num]++;
             }
+
+            let maxMiss = 0, minMiss = 100, maxFreq = 0, minFreq = 100;
+            for(let i=1; i<=49; i++) {
+                if(miss[i] > maxMiss) maxMiss = miss[i];
+                if(miss[i] < minMiss) minMiss = miss[i];
+                if(freq[i] > maxFreq) maxFreq = freq[i];
+                if(freq[i] < minFreq) minFreq = freq[i];
+            }
+            const missRange = (maxMiss - minMiss) || 1;
+            const freqRange = (maxFreq - minFreq) || 1;
+
+            let normMiss = {}, normFreq = {};
+            for(let i=1; i<=49; i++) {
+                normMiss[i] = ((miss[i] - minMiss) / missRange) * 100; 
+                normFreq[i] = ((maxFreq - freq[i]) / freqRange) * 100; 
+            }
+
+            let finalScores = {};
+            let selectedKills = [];
             
+            const jitter = isBacktest ? 0 : (Math.random() * 0.01);
+
+            if (strategy === 'miss') {
+                for(let i=1; i<=49; i++) finalScores[i] = normMiss[i] + jitter;
+                let sorted = Object.keys(finalScores).map(Number).sort((a,b) => finalScores[b] - finalScores[a]);
+                selectedKills = pickKillWithCooldown(sorted, targetCount, recentHistory);
+            } else if (strategy === 'combo') {
+                for(let i=1; i<=49; i++) finalScores[i] = (normMiss[i] * 0.6) + (normFreq[i] * 0.4) + jitter;
+                let sorted = Object.keys(finalScores).map(Number).sort((a,b) => finalScores[b] - finalScores[a]);
+                selectedKills = pickKillWithCooldown(sorted, targetCount, recentHistory);
+            } else if (strategy === 'intersect') {
+                for(let i=1; i<=49; i++) {
+                    let trend = (normMiss[i] * 0.7) - (normFreq[i] * 0.3); 
+                    finalScores[i] = (normMiss[i] * 0.5) + (normFreq[i] * 0.3) + (trend * 0.2) + jitter;
+                }
+                
+                let s_miss = {}, s_freq = {}, s_trend = {};
+                for(let i=1; i<=49; i++) {
+                    s_miss[i] = normMiss[i];
+                    s_freq[i] = normFreq[i];
+                    s_trend[i] = finalScores[i];
+                }
+
+                let poolSize = targetCount * 4;
+                let p_miss = sortDesc(s_miss).slice(0, poolSize);
+                let p_freq = sortDesc(s_freq).slice(0, poolSize);
+                let p_trend = sortDesc(s_trend).slice(0, poolSize);
+
+                for(let i=0; i<poolSize; i++) {
+                    if(selectedKills.length >= targetCount) break;
+                    let num = parseInt(p_miss[i]);
+                    if(p_freq.includes(String(num)) && p_trend.includes(String(num)) && !recentHistory.includes(num)) {
+                        selectedKills.push(num);
+                    }
+                }
+                if(selectedKills.length < targetCount) {
+                    for(let i=0; i<poolSize; i++) {
+                        if(selectedKills.length >= targetCount) break;
+                        let num = parseInt(p_miss[i]);
+                        if(selectedKills.includes(num) || recentHistory.includes(num)) continue;
+                        let matchCount = 0;
+                        if(p_freq.includes(String(num))) matchCount++;
+                        if(p_trend.includes(String(num))) matchCount++;
+                        if(matchCount >= 1) selectedKills.push(num);
+                    }
+                }
+                let sortedTrend = sortDesc(s_trend);
+                for(let i=0; i<sortedTrend.length; i++) {
+                    if(selectedKills.length >= targetCount) break;
+                    let num = parseInt(sortedTrend[i]);
+                    if(!selectedKills.includes(num) && !recentHistory.includes(num)) selectedKills.push(num);
+                }
+            }
+
             let zScores = {}; zodiacKeys.forEach(z => zScores[z] = 0);
             let tScores = {}; for(let t=0; t<10; t++) tScores[t] = 0;
             let headScores = {}; for(let h=0; h<5; h++) headScores[h] = 0;
             let halfScores = {"红单":0,"红双":0,"蓝单":0,"蓝双":0,"绿单":0,"绿双":0};
-            let numScores = {};
+            
+            // 新增属性分数池
+            let sumScores = {}; for(let k in sumMap) sumScores[k] = 0;
+            let doorScores = {}; for(let k in doorMap) doorScores[k] = 0;
+            let segScores = {}; for(let k in segMap) segScores[k] = 0;
+            let wuXingScores = {}; for(let k in wuXingMap) wuXingScores[k] = 0;
+            let tailSumScores = {}; for(let t=0; t<10; t++) tailSumScores[t+"合尾"] = 0;
+            let headParityScores = {}; 
+            for(let h=0; h<5; h++) { headParityScores[h+"头单"] = 0; headParityScores[h+"头双"] = 0; }
 
             for(let i=1; i<=49; i++) {
-                let zScore = miss[i] * 1.5;
-                if (miss[i] > 40) zScore -= 40; 
-                if (freq[i] > 6) zScore -= 30;  
+                let score = finalScores[i] || 0;
+                zScores[getZodiac(i)] += score;
+                tScores[i%10] += score;
+                headScores[Math.floor(i/10)] += score;
+                halfScores[getHalfWave(i)] += score;
                 
-                zScores[getZodiac(i)] += zScore;
-                tScores[i%10] += zScore;
-                headScores[Math.floor(i/10)] += zScore;
-                halfScores[getHalfWave(i)] += zScore;
-
-                let nScore = miss[i] * 1.2;
-                if (miss[i] < 8) nScore -= 100; 
-                if (miss[i] > 35) nScore -= 80; 
-                if (freq[i] > 5) nScore -= 60;
-
-                numScores[i] = nScore;
+                sumScores[getSumGroupReal(i)] += score;
+                doorScores[getDoorGroup(i)] += score;
+                segScores[getSegGroup(i)] += score;
+                wuXingScores[getWuXing(i)] += score;
+                tailSumScores[getTailSum(i)] += score;
+                headParityScores[getHeadParity(i)] += score;
             }
 
-            let sortDesc = (obj) => Object.keys(obj).sort((a,b) => obj[b] - obj[a]);
-            
             return {
                 sortedZ: sortDesc(zScores),
                 sortedT: sortDesc(tScores).map(Number),
                 sortedHead: sortDesc(headScores).map(Number),
                 sortedHalf: sortDesc(halfScores),
-                sortedNums: sortDesc(numScores).map(Number)
+                sortedSum: sortDesc(sumScores),
+                sortedDoor: sortDesc(doorScores),
+                sortedSeg: sortDesc(segScores),
+                sortedWuXing: sortDesc(wuXingScores),
+                sortedTailSum: sortDesc(tailSumScores),
+                sortedHeadParity: sortDesc(headParityScores),
+                killNums: selectedKills.sort((a,b)=>a-b)
             };
         }
 
@@ -410,14 +509,13 @@
             return selected;
         }
 
-        // ================= 强制 2.5 秒的硬核动画逻辑 =================
         async function startScan() {
             const btn = document.getElementById('btnScan');
             const modal = document.getElementById('calcModal');
             const progressBar = document.getElementById('progressBar');
             const logsContainer = document.getElementById('calcLogs');
+            const strategy = document.getElementById('selStrategy').value;
             
-            // 1. 无条件瞬间弹窗并重置
             document.getElementById('vipModal').classList.remove('show');
             modal.classList.add('show');
             progressBar.style.width = '0%';
@@ -425,19 +523,18 @@
             logsContainer.innerHTML = '';
             btn.disabled = true;
 
-            // 2. 极度硬核的模拟日志（12行，确保弹窗显得很丰满）
+            let strategyName = strategy === 'intersect' ? 'Strict Intersect' : (strategy === 'combo' ? 'Dual Track Combo' : 'Single Miss Track');
+            document.getElementById('calcStrategyName').innerText = strategyName;
+
             const logs = [
-                { text: "> [SYS] 正在建立量子加密隧道...", type: "" },
-                { text: "> [SYS] 连接云端数据节点: HK-Node-07", type: "log-sys" },
-                { text: "> [SYNC] 拉取近30天全量历史开奖数据...", type: "" },
+                { text: "> [SYS] 建立量子加密隧道...", type: "" },
+                { text: "> [SYNC] 拉取最新全量历史开奖数据...", type: "log-sys" },
                 { text: "> [DATA] 数据清洗完毕，剔除异常噪点.", type: "log-success" },
-                { text: "> [ALGO] 初始化高维双轨过滤模型...", type: "log-warn" },
-                { text: "> [HASH] 开启 5 期冷却防死循环哈希锁...", type: "log-warn" },
-                { text: "> [FILTER] 启动单码极寒温控防护罩...", type: "log-warn" },
-                { text: "> [COMPUTE] 执行 10,000 次蒙特卡洛树搜索...", type: "" },
-                { text: "> [RISK] 极寒排雷引擎剥离高危断层数据...", type: "log-danger" },
-                { text: "> [AI] 神经网络推演完毕，输出最终权重.", type: "log-success" },
-                { text: "> [DONE] 风控模型计算完毕，雷区已锁定.", type: "log-success" }
+                { text: "> [NORM] 执行多因子 Min-Max 标准化...", type: "log-warn" },
+                { text: `> [ALGO] 启用排雷策略: ${strategyName}...`, type: "log-warn" },
+                { text: "> [COMPUTE] 执行历史回测与12维全属性计算...", type: "log-danger" },
+                { text: "> [RISK] 锁定高危雷区(合尾/头单双/五行)...", type: "log-danger" },
+                { text: "> [DONE] 模型计算完毕，全维策略矩阵生成.", type: "log-success" }
             ];
 
             let logIndex = 0;
@@ -446,7 +543,6 @@
                     const p = document.createElement('div');
                     p.className = logs[logIndex].type;
                     p.innerHTML = logs[logIndex].text + (logIndex === logs.length - 1 ? '' : '<span class="cursor"></span>');
-                    // 移除上一行的光标
                     if (logsContainer.lastChild && logsContainer.lastChild.querySelector('.cursor')) {
                         logsContainer.lastChild.querySelector('.cursor').remove();
                     }
@@ -457,14 +553,11 @@
                 } else {
                     clearInterval(logTimer);
                 }
-            }, 200); // 11条 * 200ms = 2.2秒
+            }, 200);
 
             try {
-                // 3. 并发请求网络数据
                 const fetchPromise = fetch(DATA_URL + '?t=' + Date.now(), { cache: 'no-store' }).then(res => res.json());
-                
-                // 用 Promise.all 锁死最短执行时间，确保动画跑完
-                const [raw, _] = await Promise.all([fetchPromise, new Promise(r => setTimeout(r, 2400))]);
+                const [raw, _] = await Promise.all([fetchPromise, new Promise(r => setTimeout(r, 2000))]);
 
                 SEQ = raw.map(x => ({ 
                     period: x.period || x.issue, 
@@ -476,11 +569,10 @@
                 progressBar.style.width = '100%';
                 progressBar.style.background = 'linear-gradient(90deg, var(--green), var(--blue))';
                 
-                // 替换最后一行日志
                 logsContainer.innerHTML = '';
                 const p = document.createElement('div');
                 p.className = 'log-success';
-                p.innerHTML = "> [SUCCESS] 核心矩阵渲染完成！";
+                p.innerHTML = "> [SUCCESS] 数据同步与全属性策略运算完成！";
                 logsContainer.appendChild(p);
                 
                 renderLatestResult();
@@ -492,11 +584,10 @@
                 progressBar.style.background = 'var(--red)';
                 logsContainer.innerHTML = `<div class="log-danger">> [ERR] 数据同步失败: ${e.message}</div>`;
             } finally {
-                // 4. 稍微停留一下后关闭
                 setTimeout(() => {
                     modal.classList.remove('show');
                     btn.disabled = false;
-                }, 600); 
+                }, 500); 
             }
         }
 
@@ -521,6 +612,8 @@
 
             const testLen = isVIP ? parseInt(document.getElementById('selPeriod').value) : 30;
             const count = isVIP ? parseInt(document.getElementById('selCount').value) : 1;
+            const strategy = isVIP ? document.getElementById('selStrategy').value : 'miss';
+            
             const start = SEQ.length - testLen;
             
             const nextPeriodNum = parseInt(SEQ[SEQ.length - 1].period.replace(/\D/g, '')) + 1;
@@ -540,16 +633,20 @@
 
             let stats = {
                 kz: { hits: 0, maxWin: 0, curWin: 0 }, kt: { hits: 0, maxWin: 0, curWin: 0 }, khead: { hits: 0, maxWin: 0, curWin: 0 }, 
-                khalf: { hits: 0, maxWin: 0, curWin: 0 }, kn5: { hits: 0, maxWin: 0, curWin: 0 }, kn10: { hits: 0, maxWin: 0, curWin: 0 }
+                khalf: { hits: 0, maxWin: 0, curWin: 0 }, ksum: { hits: 0, maxWin: 0, curWin: 0 }, kdoor: { hits: 0, maxWin: 0, curWin: 0 }, 
+                kseg: { hits: 0, maxWin: 0, curWin: 0 }, kwuxing: { hits: 0, maxWin: 0, curWin: 0 }, ktailsum: { hits: 0, maxWin: 0, curWin: 0 }, 
+                kheadparity: { hits: 0, maxWin: 0, curWin: 0 }, kn5: { hits: 0, maxWin: 0, curWin: 0 }, kn10: { hits: 0, maxWin: 0, curWin: 0 }
             };
 
-            let histKZ = [], histKT = [], histKHead = [], histKHalf = [], histKN5 = [], histKN10 = [];
+            let histKZ = [], histKT = [], histKHead = [], histKHalf = [], histKSum = [], histKDoor = [], histKSeg = [], 
+                histKWuXing = [], histKTailSum = [], histKHeadParity = [], histKN5 = [], histKN10 = [];
 
             for (let i = start; i < SEQ.length; i++) {
                 const past = SEQ.slice(0, i).map(x => x.num);
                 const real = SEQ[i].num;
-                const pools = calcScores(past);
-
+                
+                let pools = calcScores(past, strategy, count, [], true);
+                
                 const kZ = pickKillWithCooldown(pools.sortedZ, count, histKZ);
                 histKZ = histKZ.concat(kZ).slice(-COOLDOWN_ZODIAC);
 
@@ -563,16 +660,42 @@
                 const kHalf = pickKillWithCooldown(pools.sortedHalf, count, histKHalf);
                 histKHalf = histKHalf.concat(kHalf).slice(-COOLDOWN_ZODIAC);
 
-                const kNums5 = pickKillWithCooldown(pools.sortedNums, 5, histKN5);
+                const kSum = pickKillWithCooldown(pools.sortedSum, count, histKSum);
+                histKSum = histKSum.concat(kSum).slice(-COOLDOWN_ZODIAC);
+
+                const kDoor = pickKillWithCooldown(pools.sortedDoor, count, histKDoor);
+                histKDoor = histKDoor.concat(kDoor).slice(-COOLDOWN_ZODIAC);
+
+                const kSeg = pickKillWithCooldown(pools.sortedSeg, count, histKSeg);
+                histKSeg = histKSeg.concat(kSeg).slice(-COOLDOWN_ZODIAC);
+
+                const kWuXing = pickKillWithCooldown(pools.sortedWuXing, count, histKWuXing);
+                histKWuXing = histKWuXing.concat(kWuXing).slice(-COOLDOWN_ZODIAC);
+
+                const kTailSum = pickKillWithCooldown(pools.sortedTailSum, count, histKTailSum);
+                histKTailSum = histKTailSum.concat(kTailSum).slice(-COOLDOWN_ZODIAC);
+
+                const kHeadParity = pickKillWithCooldown(pools.sortedHeadParity, count, histKHeadParity);
+                histKHeadParity = histKHeadParity.concat(kHeadParity).slice(-COOLDOWN_ZODIAC);
+
+                const pools5 = calcScores(past, strategy, 5, histKN5, true);
+                const kNums5 = pools5.killNums;
                 histKN5 = histKN5.concat(kNums5).slice(-COOLDOWN_NUM);
 
-                const kNums10 = pickKillWithCooldown(pools.sortedNums, 10, histKN10);
+                const pools10 = calcScores(past, strategy, 10, histKN10, true);
+                const kNums10 = pools10.killNums;
                 histKN10 = histKN10.concat(kNums10).slice(-COOLDOWN_NUM);
 
                 const realZ = getZodiac(real);
                 const realT = real % 10;
                 const realHead = getHead(real);
                 const realHalf = getHalfWave(real);
+                const realSum = getSumGroupReal(real);
+                const realDoor = getDoorGroup(real);
+                const realSeg = getSegGroup(real);
+                const realWuXing = getWuXing(real);
+                const realTailSum = getTailSum(real);
+                const realHeadParity = getHeadParity(real);
 
                 const updateStat = (key, isHit) => {
                     if(isHit) {
@@ -588,34 +711,51 @@
                 updateStat('kt', (!kT.includes(realT)));
                 updateStat('khead', (!kHead.includes(realHead)));
                 updateStat('khalf', (!kHalf.includes(realHalf)));
+                updateStat('ksum', (!kSum.includes(realSum)));
+                updateStat('kdoor', (!kDoor.includes(realDoor)));
+                updateStat('kseg', (!kSeg.includes(realSeg)));
+                updateStat('kwuxing', (!kWuXing.includes(realWuXing)));
+                updateStat('ktailsum', (!kTailSum.includes(realTailSum)));
+                updateStat('kheadparity', (!kHeadParity.includes(realHeadParity)));
                 updateStat('kn5', (!kNums5.includes(real)));
                 updateStat('kn10', (!kNums10.includes(real)));
             }
 
-            const nextPools = calcScores(SEQ.map(x => x.num));
+            const currentPast = SEQ.map(x => x.num);
+            const nextPools = calcScores(currentPast, strategy, count, [], false);
+            
             const nextKZ = pickKillWithCooldown(nextPools.sortedZ, count, histKZ);
             const nextKT = pickKillWithCooldown(nextPools.sortedT, count, histKT);
             const nextKHeadRaw = pickKillWithCooldown(nextPools.sortedHead, count, histKHead);
             const nextKHead = nextKHeadRaw.map(h => h + "头");
             const nextKHalf = pickKillWithCooldown(nextPools.sortedHalf, count, histKHalf);
-            const nextKN5 = pickKillWithCooldown(nextPools.sortedNums, 5, histKN5).sort((a,b)=>a-b);
-            const nextKN10 = pickKillWithCooldown(nextPools.sortedNums, 10, histKN10).sort((a,b)=>a-b);
+            
+            const nextKSum = pickKillWithCooldown(nextPools.sortedSum, count, histKSum);
+            const nextKDoor = pickKillWithCooldown(nextPools.sortedDoor, count, histKDoor);
+            const nextKSeg = pickKillWithCooldown(nextPools.sortedSeg, count, histKSeg);
+            const nextKWuXing = pickKillWithCooldown(nextPools.sortedWuXing, count, histKWuXing);
+            const nextKTailSum = pickKillWithCooldown(nextPools.sortedTailSum, count, histKTailSum);
+            const nextKHeadParity = pickKillWithCooldown(nextPools.sortedHeadParity, count, histKHeadParity);
+
+            const nextKN5 = calcScores(currentPast, strategy, 5, histKN5, false).killNums;
+            const nextKN10 = calcScores(currentPast, strategy, 10, histKN10, false).killNums;
 
             const getRate = (hits) => ((hits / testLen) * 100).toFixed(1);
 
-            const renderItem = (title, valArray, hits, maxWin, isFixed5, isFixed10) => {
+            const renderItem = (title, valArray, hits, maxWin, isFixed5, isFixed10, isIntersect) => {
                 const rate = getRate(hits);
                 const valStr = valArray.join(', ');
                 let countLabel = `杀${count}个`;
                 if(isFixed5) countLabel = "杀5码";
                 if(isFixed10) countLabel = "杀10码";
                 
-                let rateColor = rate >= 90 ? 'var(--green)' : 'var(--gold)';
+                let rateColor = rate >= 90 ? 'var(--green)' : (rate >= 80 ? 'var(--gold)' : 'var(--red)');
+                let badge = (isIntersect && strategy === 'intersect') ? '<span class="intersect-badge">🔒 三轨交集</span>' : '';
                 
                 return `
                 <div class="kill-item">
                     <div class="kill-info">
-                        <div class="kill-title">${title} (下期排雷: ${countLabel})</div>
+                        <div class="kill-title">${title} (下期排雷: ${countLabel}) ${badge}</div>
                         <div class="kill-stat">
                             <span>胜率: <span class="stat-rate" style="color:${rateColor}">${rate}%</span></span>
                             <span>命中: <span class="stat-hit">${hits}/${testLen}</span></span>
@@ -628,18 +768,23 @@
             };
 
             const html = `
-                ${renderItem("高危生肖排雷", nextKZ, stats.kz.hits, stats.kz.maxWin, false, false)}
-                ${renderItem("高危头数排雷", nextKHead, stats.khead.hits, stats.khead.maxWin, false, false)}
-                ${renderItem("冷门尾数排雷", nextKT.map(t=>t+"尾"), stats.kt.hits, stats.kt.maxWin, false, false)}
-                ${renderItem("变异半波剥离", nextKHalf, stats.khalf.hits, stats.khalf.maxWin, false, false)}
-                ${renderItem("精准号码排雷", nextKN5, stats.kn5.hits, stats.kn5.maxWin, true, false)}
-                ${renderItem("重火力覆盖", nextKN10, stats.kn10.hits, stats.kn10.maxWin, false, true)}
+                ${renderItem("高危生肖排雷", nextKZ, stats.kz.hits, stats.kz.maxWin, false, false, false)}
+                ${renderItem("高危头数排雷", nextKHead, stats.khead.hits, stats.khead.maxWin, false, false, false)}
+                ${renderItem("冷门尾数排雷", nextKT.map(t=>t+"尾"), stats.kt.hits, stats.kt.maxWin, false, false, false)}
+                ${renderItem("变异半波剥离", nextKHalf, stats.khalf.hits, stats.khalf.maxWin, false, false, false)}
+                ${renderItem("高危合数排雷", nextKSum, stats.ksum.hits, stats.ksum.maxWin, false, false, false)}
+                ${renderItem("高危门数排雷", nextKDoor, stats.kdoor.hits, stats.kdoor.maxWin, false, false, false)}
+                ${renderItem("高危段位排雷", nextKSeg, stats.kseg.hits, stats.kseg.maxWin, false, false, false)}
+                ${renderItem("高危合尾排雷", nextKTailSum, stats.ktailsum.hits, stats.ktailsum.maxWin, false, false, false)}
+                ${renderItem("头数单双排雷", nextKHeadParity, stats.kheadparity.hits, stats.kheadparity.maxWin, false, false, false)}
+                ${renderItem("五行排雷", nextKWuXing, stats.kwuxing.hits, stats.kwuxing.maxWin, false, false, false)}
+                ${renderItem("精准号码排雷", nextKN5, stats.kn5.hits, stats.kn5.maxWin, true, false, true)}
+                ${renderItem("重火力覆盖", nextKN10, stats.kn10.hits, stats.kn10.maxWin, false, true, true)}
             `;
 
             document.getElementById('killList').innerHTML = html;
         }
 
-        // 页面加载静默拉取数据
         window.onload = () => {
             initVIPUI();
             fetch(DATA_URL + '?t=' + Date.now(), { cache: 'no-store' })
