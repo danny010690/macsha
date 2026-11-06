@@ -532,7 +532,7 @@
                 { text: "> [SYNC] 拉取最新全量历史开奖数据...", type: "log-sys" },
                 { text: "> [DATA] 数据清洗完毕，剔除异常噪点.", type: "log-success" },
                 { text: "> [NORM] 执行多因子 Min-Max 标准化...", type: "log-warn" },
-                { text: `> [ALGO] 启用排雷策略: ${strategyName}...`, type: "log-warn" },
+                { text: `> [ALGO] 启用剥离策略: ${strategyName}...`, type: "log-warn" },
                 { text: "> [COMPUTE] 执行历史回测与12维全属性计算...", type: "log-danger" },
                 { text: "> [RISK] 锁定高危雷区(合尾/头单双/五行)...", type: "log-danger" },
                 { text: "> [DONE] 模型计算完毕，全维策略矩阵生成.", type: "log-success" }
@@ -618,7 +618,7 @@
             const start = SEQ.length - testLen;
             
             const nextPeriodNum = parseInt(SEQ[SEQ.length - 1].period.replace(/\D/g, '')) + 1;
-            document.getElementById('targetPeriodDisplay').innerText = `目标预测：第 ${nextPeriodNum} 期排雷`;
+            document.getElementById('targetPeriodDisplay').innerText = `目标预测：第 ${nextPeriodNum} 期剥离`;
 
             const isOddPeriod = nextPeriodNum % 2 !== 0;
             const listWrapper = document.getElementById('killList');
