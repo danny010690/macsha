@@ -769,17 +769,17 @@
             };
 
             const html = `
-                ${renderItem("高危生肖排雷", nextKZ, stats.kz.hits, stats.kz.maxWin, false, false, false)}
-                ${renderItem("高危头数排雷", nextKHead, stats.khead.hits, stats.khead.maxWin, false, false, false)}
-                ${renderItem("冷门尾数排雷", nextKT.map(t=>t+"尾"), stats.kt.hits, stats.kt.maxWin, false, false, false)}
+                ${renderItem("高危生肖剥离", nextKZ, stats.kz.hits, stats.kz.maxWin, false, false, false)}
+                ${renderItem("高危头数剥离", nextKHead, stats.khead.hits, stats.khead.maxWin, false, false, false)}
+                ${renderItem("冷门尾数剥离", nextKT.map(t=>t+"尾"), stats.kt.hits, stats.kt.maxWin, false, false, false)}
                 ${renderItem("变异半波剥离", nextKHalf, stats.khalf.hits, stats.khalf.maxWin, false, false, false)}
-                ${renderItem("高危合数排雷", nextKSum, stats.ksum.hits, stats.ksum.maxWin, false, false, false)}
-                ${renderItem("高危门数排雷", nextKDoor, stats.kdoor.hits, stats.kdoor.maxWin, false, false, false)}
-                ${renderItem("高危段位排雷", nextKSeg, stats.kseg.hits, stats.kseg.maxWin, false, false, false)}
-                ${renderItem("高危合尾排雷", nextKTailSum, stats.ktailsum.hits, stats.ktailsum.maxWin, false, false, false)}
-                ${renderItem("头数单双排雷", nextKHeadParity, stats.kheadparity.hits, stats.kheadparity.maxWin, false, false, false)}
-                ${renderItem("五行排雷", nextKWuXing, stats.kwuxing.hits, stats.kwuxing.maxWin, false, false, false)}
-                ${renderItem("精准号码排雷", nextKN5, stats.kn5.hits, stats.kn5.maxWin, true, false, true)}
+                ${renderItem("高危合数剥离", nextKSum, stats.ksum.hits, stats.ksum.maxWin, false, false, false)}
+                ${renderItem("高危门数剥离", nextKDoor, stats.kdoor.hits, stats.kdoor.maxWin, false, false, false)}
+                ${renderItem("高危段位剥离", nextKSeg, stats.kseg.hits, stats.kseg.maxWin, false, false, false)}
+                ${renderItem("高危合尾剥离", nextKTailSum, stats.ktailsum.hits, stats.ktailsum.maxWin, false, false, false)}
+                ${renderItem("头数单双剥离", nextKHeadParity, stats.kheadparity.hits, stats.kheadparity.maxWin, false, false, false)}
+                ${renderItem("五行剥离", nextKWuXing, stats.kwuxing.hits, stats.kwuxing.maxWin, false, false, false)}
+                ${renderItem("精准号码剥离", nextKN5, stats.kn5.hits, stats.kn5.maxWin, true, false, true)}
                 ${renderItem("重火力覆盖", nextKN10, stats.kn10.hits, stats.kn10.maxWin, false, true, true)}
             `;
 
